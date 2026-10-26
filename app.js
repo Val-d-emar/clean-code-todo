@@ -3,6 +3,18 @@ const addButton = document.getElementsByTagName("button")[0];
 const incompleteTasksList = document.getElementById("incompleteTasks");
 const completedTasksList = document.getElementById("completed-tasks");
 
+const createDeleteButton = function () {
+  const deleteButton = document.createElement("button");
+  const deleteButtonIcon = document.createElement("img");
+
+  deleteButton.className = "delete";
+  deleteButtonIcon.src = "./remove.svg";
+  deleteButtonIcon.alt = "Delete task";
+  deleteButton.appendChild(deleteButtonIcon);
+
+  return deleteButton;
+};
+
 const createNewTaskElement = function (taskText) {
   const listItem = document.createElement("li");
 
@@ -14,8 +26,7 @@ const createNewTaskElement = function (taskText) {
 
   const editButton = document.createElement("button");
 
-  const deleteButton = document.createElement("button");
-  const deleteButtonIcon = document.createElement("img");
+  const deleteButton = createDeleteButton();
 
   label.innerText = taskText;
   label.className = "task";
@@ -27,20 +38,12 @@ const createNewTaskElement = function (taskText) {
   editButton.innerText = "Edit"; //innerText encodes special characters, HTML does not.
   editButton.className = "edit";
 
-  deleteButton.className = "delete";
-  deleteButtonIcon.src = "./remove.svg";
-  deleteButton.appendChild(deleteButtonIcon);
-
-  listItem.appendChild(checkbox);
-  listItem.appendChild(label);
-  listItem.appendChild(editInput);
-  listItem.appendChild(editButton);
-  listItem.appendChild(deleteButton);
+  listItem.append(checkbox, label, editInput, editButton, deleteButton);
   return listItem;
 };
 
 const addTask = function () {
-  if (!taskInput.value) return;
+  if (!taskInput.value.trim()) return;
   const listItem = createNewTaskElement(taskInput.value);
 
   incompleteTasksList.appendChild(listItem);
@@ -69,8 +72,7 @@ const editTask = function () {
 
 const deleteTask = function () {
   const listItem = this.parentNode;
-  const ul = listItem.parentNode;
-  ul.removeChild(listItem);
+  listItem.remove();
 };
 
 const toggleTask = function () {
@@ -93,10 +95,10 @@ const bindTaskEvents = function (taskListItem) {
   checkbox.onchange = toggleTask;
 };
 
-for (let i = 0; i < incompleteTasksList.children.length; i++) {
-  bindTaskEvents(incompleteTasksList.children[i]);
+for (const taskItem of incompleteTasksList.children) {
+  bindTaskEvents(taskItem);
 }
 
-for (let i = 0; i < completedTasksList.children.length; i++) {
-  bindTaskEvents(completedTasksList.children[i]);
+for (const taskItem of completedTasksList.children) {
+  bindTaskEvents(taskItem);
 }
